@@ -230,6 +230,15 @@ VBOX
       @plugin[:virtualization][:systems]['linux-vserver'].should == "host"
     end
 
+    it "should set Linux-VServer host if /proc/self/status contains multiple space VxID:   0" do
+      File.should_receive(:exists?).with("/proc/self/status").and_return(true)
+      File.stub(:read).with("/proc/self/status").and_return("VxID:   0")
+      @plugin.run
+      @plugin[:virtualization][:system].should == "linux-vserver"
+      @plugin[:virtualization][:role].should == "host"
+      @plugin[:virtualization][:systems]['linux-vserver'].should == "host"
+    end
+
     it "should set Linux-VServer guest if /proc/self/status contains s_context > 0" do
       File.should_receive(:exists?).with("/proc/self/status").and_return(true)
       File.stub(:read).with("/proc/self/status").and_return("s_context: 2")
